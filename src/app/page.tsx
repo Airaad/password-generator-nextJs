@@ -1,101 +1,223 @@
-import Image from "next/image";
+"use client";
+import React, { useState, useEffect } from "react";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { TypewriterEffectSmooth } from "../components/ui/typewriter-effect";
+import { BackgroundGradient } from "../components/ui/background-gradient";
+import { Button } from "../components/ui/moving-border";
+import { BackgroundBeamsWithCollision } from "@/components/ui/background-beams-with-collision";
 
-export default function Home() {
+const Home = () => {
+  const [password, setPassword] = useState("");
+  const [range, setRange] = useState(5);
+  const [includeNumbers, setIncludeNumbers] = useState(false);
+  const [specialCharacters, setSpecialCharacters] = useState(false);
+  const words = [
+    {
+      text: "Generating",
+      className: "text-white text-lg sm:text-3xl lg:text-5xl",
+    },
+    {
+      text: "strong",
+      className: "text-white text-lg sm:text-3xl lg:text-5xl",
+    },
+    {
+      text: "Passwords",
+      className:
+        "text-blue-500 dark:text-blue-500 text-lg sm:text-3xl lg:text-5xl",
+    },
+    {
+      text: "made",
+      className: "text-white text-lg sm:text-3xl lg:text-5xl",
+    },
+    {
+      text: "simple.",
+      className: "text-white text-lg sm:text-3xl lg:text-5xl",
+    },
+  ];
+
+  useEffect(() => {
+    const selectWords = (length: number) => {
+      const allCharactersArray: string[] = [
+        "0",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "+",
+      ];
+      setPassword("");
+      for (let i = 0; i < length; i++) {
+        if (includeNumbers && !specialCharacters) {
+          const newArray = allCharactersArray.filter(
+            (item, index) => index < 62
+          );
+          let randomIndex = Math.floor(Math.random() * newArray.length);
+          setPassword((preValue) => {
+            return preValue + newArray[randomIndex];
+          });
+        } else if (!includeNumbers && specialCharacters) {
+          const newArray = allCharactersArray.filter(
+            (item, index) => index > 9
+          );
+          let randomIndex = Math.floor(Math.random() * newArray.length);
+          setPassword((preValue) => {
+            return preValue + newArray[randomIndex];
+          });
+        } else if (!includeNumbers && !specialCharacters) {
+          const newArray = allCharactersArray.filter(
+            (item, index) => index < 62 && index > 9
+          );
+          let randomIndex = Math.floor(Math.random() * newArray.length);
+          setPassword((preValue) => {
+            return preValue + newArray[randomIndex];
+          });
+        } else {
+          let randomIndex = Math.floor(
+            Math.random() * allCharactersArray.length
+          );
+          setPassword((preValue) => {
+            return preValue + allCharactersArray[randomIndex];
+          });
+        }
+      }
+    };
+    selectWords(range);
+  }, [range, includeNumbers, specialCharacters]);
+
+  const handleChangeRange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const range = Number(event.target.value);
+    // console.log(range);
+
+    setRange(range);
+  };
+
+  const handleAddNumberChange = () => {
+    setIncludeNumbers((preValue) => !preValue);
+  };
+
+  const handleAddSymbolChange = () => {
+    setSpecialCharacters((preValue) => !preValue);
+  };
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
+    <BackgroundBeamsWithCollision>
+      <div className="flex items-center justify-center gap-8 w-[80%] md:w-[30%] min-h-screen mx-auto flex-col px-4 text-white ">
+        <TypewriterEffectSmooth words={words} />
+        <BackgroundGradient className="rounded-[22px] max-w-sm p-2  bg-black dark:bg-zinc-900">
+          <Input
+            readOnly
+            value={password}
+            className="h-[50px] text-xl font-semibold tracking-wider bg-[#18181B] rounded-xl"
+          />
+        </BackgroundGradient>
+        <input
+          className="slider"
+          type="range"
+          min="6"
+          max="16"
+          onChange={handleChangeRange}
         />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+        <Input
+            readOnly
+            value={`Length: ${range}`}
+            className="text-center h-[40px] w-[50%] md:w-[40%] text-xl font-semibold tracking-wider bg-[#18181B] rounded-xl"
+        />
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        <div className="p-6 md:p-10 rounded-full flex flex-col gap-4">
+          <Button
+            borderRadius="1.75rem"
+            className="bg-slate-800 text-white border-slate-900"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+            <div className="flex items-center gap-4">
+              <Switch
+                checked={includeNumbers}
+                onCheckedChange={handleAddNumberChange}
+              />
+              <p className="font-medium text-md text-[#3B82F6]">Add Numbers</p>
+            </div>
+          </Button>
+          <Button
+            borderRadius="1.75rem"
+            className="bg-slate-800 text-white border-slate-900"
           >
-            Read our docs
-          </a>
+            <div className="flex items-center gap-4">
+              <Switch
+                checked={specialCharacters}
+                onCheckedChange={handleAddSymbolChange}
+              />
+              <p className="font-medium text-md text-[#3B82F6]">Add Symbols</p>
+            </div>
+          </Button>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+      </div>
+    </BackgroundBeamsWithCollision>
   );
-}
+};
+
+export default Home;
